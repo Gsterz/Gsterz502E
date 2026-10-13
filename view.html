@@ -1,1 +1,83 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shared Timer</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111827;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    #time {
+      font-size: clamp(64px, 18vw, 140px);
+      font-weight: bold;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="time">--:--</div>
+
+  <script>
+    const SUPABASE_URL =
+      "https://liznsgjnpujwsbhejgvu.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_Fj8_nSWCpU4Lmdee1LPjOg_XVp1efYF";
+
+    const timeDisplay = document.getElementById("time");
+
+    async function loadTime() {
+      try {
+        const response = await fetch(
+          `${SUPABASE_URL}/rest/v1/shared_timer?id=eq.1&select=adjusted_time&limit=1`,
+          {
+            method: "GET",
+            headers: {
+              "apikey": SUPABASE_KEY,
+              "Authorization": `Bearer ${SUPABASE_KEY}`
+            },
+            cache: "no-store"
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("시간 조회 실패");
+        }
+
+        const data = await response.json();
+
+        if (data.length > 0 && data[0].adjusted_time) {
+          const parts = data[0].adjusted_time.split(":");
+
+          timeDisplay.textContent =
+            parts.length === 3
+              ? `${parts[1]}:${parts[2]}`
+              : "--:--";
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadTime();
+    setInterval(loadTime, 2000);
+  </script>
+</body>
+</html>

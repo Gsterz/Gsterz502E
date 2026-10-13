@@ -999,4 +999,50 @@ if (btnCalc5) {
 }
 
 
+// =========================
+// 공유 타이머 전송
+// =========================
+const shareTimerBtn = document.getElementById("btnShareTimer");
+const shareTimerStatus = document.getElementById("shareTimerStatus");
+
+if (shareTimerBtn) {
+  shareTimerBtn.addEventListener("click", async () => {
+    const adjustedTime = document.getElementById("TargetUTCTime").value;
+
+    if (!/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(adjustedTime)) {
+      shareTimerStatus.textContent = "Start/Stop을 켜고 시간을 확인하세요.";
+      return;
+    }
+
+    shareTimerBtn.disabled = true;
+    shareTimerStatus.textContent = "Sending...";
+
+    try {
+      const response = await fetch("/.netlify/functions/share-timer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          adjusted_time: adjustedTime
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("전송 실패");
+      }
+
+      shareTimerStatus.textContent = `Sent: ${adjustedTime}`;
+    } catch (error) {
+      shareTimerStatus.textContent = "전송 실패. 다시 시도하세요.";
+      console.error(error);
+    } finally {
+      shareTimerBtn.disabled = false;
+    }
+  });
+}
+
+
+
+
 })

@@ -1007,9 +1007,10 @@ const shareTimerStatus = document.getElementById("shareTimerStatus");
 
 if (shareTimerBtn) {
   shareTimerBtn.addEventListener("click", async () => {
-    const adjustedTime = document.getElementById("TargetUTCTime").value;
+    const fullTime = document.getElementById("TargetUTCTime").value;
+const adjustedTime = fullTime.split(":").slice(1).join(":");
 
-    if (!/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(adjustedTime)) {
+    if (!/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(fullTime)) {
       shareTimerStatus.textContent = "Start/Stop을 켜고 시간을 확인하세요.";
       return;
     }

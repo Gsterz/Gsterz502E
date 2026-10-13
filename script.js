@@ -1025,7 +1025,7 @@ const adjustedTime = fullTime.split(":").slice(1).join(":");
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          adjusted_time: adjustedTime
+          adjusted_time: fullTime
         })
       });
 

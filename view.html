@@ -6,29 +6,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shared Timer</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+  * {
+    box-sizing: border-box;
+  }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #111827;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
+  body {
+    margin: 0;
+    padding: 6px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #111827;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
 
-    #time {
-      font-size: clamp(64px, 18vw, 140px);
-      font-weight: bold;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 2px;
-    }
-  </style>
+  #time {
+    font-size: clamp(36px, 12vw, 64px);
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+</style>
+
 </head>
 
 <body>

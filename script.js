@@ -1048,8 +1048,14 @@ if (btnCalc5) {
       // 화면에는 MM:SS만 표시
       const displayTime = `${sendMinute}:${sendSecond}`;
 
-      shareTimerBtn.disabled = true;
-      shareTimerStatus.textContent = "Sending...";
+      
+shareTimerBtn.disabled = true;
+
+// 전송 상태 박스 스타일
+shareTimerStatus.className =
+  "mt-3 min-h-10 flex items-center justify-center text-center text-sm rounded-lg px-3 py-2 border-2 border-blue-400 bg-blue-50 text-blue-700";
+
+shareTimerStatus.textContent = "Sending...";
 
       try {
         const response = await fetch(

@@ -911,33 +911,35 @@ if (btnCalc4) {
     })
   }
 
-const targetUtcInput = document.getElementById("TargetUTCTime")
+
+function copyTimerDisplay(value, element) {
+  if (!/^\d{2}:\d{2}:\d{2}$/.test(value)) return;
+
+  const [, mm, ss] = value.split(":");
+  const copyText = `${mm} ${ss}`;
+
+  navigator.clipboard.writeText(copyText);
+
+  const rect = element.getBoundingClientRect();
+
+  showCopyMessage(
+    copyText,
+    rect.left + rect.width / 2,
+    rect.top
+  );
+}
+
+// Adjusted Time 복사
+const targetUtcInput = document.getElementById("TargetUTCTime");
 
 if (targetUtcInput) {
-
-  targetUtcInput.style.cursor = "pointer"
+  targetUtcInput.style.cursor = "pointer";
 
   targetUtcInput.addEventListener("click", () => {
-
-    const value = targetUtcInput.value
-
-    if (!/^\d{2}:\d{2}:\d{2}$/.test(value)) return
-
-    const [, mm, ss] = value.split(":")
-
-    const copyText = `${mm} ${ss}`
-
-    navigator.clipboard.writeText(copyText)
-
-    const rect = targetUtcInput.getBoundingClientRect()
-
-    showCopyMessage(
-      copyText,
-      rect.left + rect.width / 2,
-      rect.top
-    )
-  })
+    copyTimerDisplay(targetUtcInput.value, targetUtcInput);
+  });
 }
+
   
 // =========================
 // 연집 계산 (btnCalcExplain5)

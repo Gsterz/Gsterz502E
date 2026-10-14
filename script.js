@@ -999,50 +999,87 @@ if (btnCalc5) {
 }
 
 
-// =========================
-// 공유 타이머 전송
-// =========================
-const shareTimerBtn = document.getElementById("btnShareTimer");
-const shareTimerStatus = document.getElementById("shareTimerStatus");
 
-if (shareTimerBtn) {
-  shareTimerBtn.addEventListener("click", async () => {
-    const fullTime = document.getElementById("TargetUTCTime").value;
-const adjustedTime = fullTime.split(":").slice(1).join(":");
+  // =========================
+  // 공유 타이머 전송
+  // =========================
+  const shareTimerBtn = document.getElementById("btnShareTimer");
+  const shareTimerStatus = document.getElementById("shareTimerStatus");
 
-    if (!/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(fullTime)) {
-      shareTimerStatus.textContent = "Start/Stop을 켜고 시간을 확인하세요.";
-      return;
-    }
+  if (shareTimerBtn) {
+    shareTimerBtn.addEventListener("click", async () => {
+      const fullTime = document.getElementById("TargetUTCTime").value;
 
-    shareTimerBtn.disabled = true;
-    shareTimerStatus.textContent = "Sending...";
-
-    try {
-      const response = await fetch("/.netlify/functions/share-timer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          adjusted_time: fullTime
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error("전송 실패");
+      if (!/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(fullTime)) {
+        shareTimerStatus.textContent = "Start/Stop을 켜고 시간을 확인하세요.";
+        return;
       }
 
-      shareTimerStatus.textContent = `Sent: ${adjustedTime}`;
-    } catch (error) {
-      shareTimerStatus.textContent = "전송 실패. 다시 시도하세요.";
-      console.error(error);
-    } finally {
-      shareTimerBtn.disabled = false;
-    }
-  });
-}
+      // HH:MM:SS를 초 단위로 변환
+      const [hour, minute, second] = fullTime.split(":").map(Number);
 
+      const totalSeconds =
+        hour * 3600 + minute * 60 + second;
+
+      // 가장 가까운 10초 단위로 반올림
+      const roundedSeconds =
+        Math.round(totalSeconds / 10) * 10;
+
+      // 24시간 범위를 유지 (자정 넘어가는 경우 처리)
+      const normalizedSeconds =
+        ((roundedSeconds % 86400) + 86400) % 86400;
+
+      // 다시 HH:MM:SS로 변환
+      const sendHour = String(
+        Math.floor(normalizedSeconds / 3600)
+      ).padStart(2, "0");
+
+      const sendMinute = String(
+        Math.floor((normalizedSeconds % 3600) / 60)
+      ).padStart(2, "0");
+
+      const sendSecond = String(
+        normalizedSeconds % 60
+      ).padStart(2, "0");
+
+      const sendTime =
+        `${sendHour}:${sendMinute}:${sendSecond}`;
+
+      // 화면에는 MM:SS만 표시
+      const displayTime = `${sendMinute}:${sendSecond}`;
+
+      shareTimerBtn.disabled = true;
+      shareTimerStatus.textContent = "Sending...";
+
+      try {
+        const response = await fetch(
+          "/.netlify/functions/share-timer",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              adjusted_time: sendTime
+            })
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("전송 실패");
+        }
+
+        shareTimerStatus.textContent =
+          `Sent: ${displayTime}`;
+      } catch (error) {
+        shareTimerStatus.textContent =
+          "전송 실패. 다시 시도하세요.";
+        console.error(error);
+      } finally {
+        shareTimerBtn.disabled = false;
+      }
+    });
+  }
 
 
 

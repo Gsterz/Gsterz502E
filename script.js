@@ -1090,5 +1090,33 @@ shareTimerStatus.textContent = "Sending...";
   }
 
 
+  // =========================
+  // Sent 시간 클릭 복사
+  // =========================
+  if (shareTimerStatus) {
+    shareTimerStatus.style.cursor = "pointer";
+
+    shareTimerStatus.addEventListener("click", () => {
+      const match = shareTimerStatus.textContent.match(
+        /^Sent: ((?:[01]\d|2[0-3]):[0-5]\d)$/
+      );
+
+      if (!match) return;
+
+      const displayTime = match[1];
+      const copyTime = `${displayTime.split(":")[0]} ${displayTime.split(":")[1]}`;
+
+      navigator.clipboard.writeText(copyTime);
+
+      const rect = shareTimerStatus.getBoundingClientRect();
+
+      showCopyMessage(
+        copyTime,
+        rect.left + rect.width / 2,
+        rect.top
+      );
+    });
+  }
+
 
 })

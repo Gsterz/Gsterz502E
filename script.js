@@ -786,60 +786,44 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // =========================
-  // Timer 시작 / 정지
-  // =========================
+// =========================
+// Timer 자동 시작
+// =========================
 
-  const startCheckbox = document.getElementById("StartTimeCheckbox");
+function updateClock() {
 
-  if (startCheckbox) {
+  const now = new Date();
 
-    startCheckbox.addEventListener("change", () => {
+  // 현재 UTC
+  document.getElementById("NowUTCTime").value =
+    formatUTC(now);
 
-      // 체크 ON
-      if (startCheckbox.checked) {
+  // 보정 목표시간
+  const targetInput =
+    document.getElementById("EditTargetTime").value;
 
-        const updateClock = () => {
+  const offsetSec = parseTime(targetInput);
 
-          const now = new Date();
+  if (offsetSec !== null) {
 
-          // 현재 UTC
-          document.getElementById("NowUTCTime").value =
-            formatUTC(now);
+    const targetDate =
+      new Date(now.getTime() + offsetSec * 1000);
 
-          // 보정 목표시간
-          const targetInput =
-            document.getElementById("EditTargetTime").value;
+    document.getElementById("TargetUTCTime").value =
+      formatUTC(targetDate);
 
-          const offsetSec = parseTime(targetInput);
+  } else {
 
-          if (offsetSec !== null) {
-
-            const targetDate =
-              new Date(now.getTime() + offsetSec * 1000);
-
-            document.getElementById("TargetUTCTime").value =
-              formatUTC(targetDate);
-
-          } else {
-
-            document.getElementById("TargetUTCTime").value = "";
-          }
-        };
-
-        updateClock();
-
-        utcTimer = setInterval(updateClock, 1000);
-      }
-
-      // 체크 OFF
-      else {
-
-        clearInterval(utcTimer);
-        utcTimer = null;
-      }
-    });
+    document.getElementById("TargetUTCTime").value = "";
   }
+}
+
+// 페이지 로딩 즉시 실행
+updateClock();
+
+// 이후 1초마다 갱신
+utcTimer = setInterval(updateClock, 1000);
+ 
 
   // =========================
   // Adjusted Time 클릭 복사
